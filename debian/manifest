@@ -1,0 +1,2 @@
+usr/share/java/sis-base.jar:
+         Class-Path: commons-lang.jar commons-io.jar

@@ -1,0 +1,9 @@
+This package is needed by libsis-jhdf5-java and possibly by other related
+packages in the future.
+
+Do not confuse it with "Apache SIS".
+
+It does not seem to have a web page and does not seem to be used outside of
+internal ETH SIS projects.
+This implies that we cannot watch for versios with d/watch
+

@@ -1,0 +1,175 @@
+--- a/source/java/ch/systemsx/cisd/base/convert/NativeData.java
++++ b/source/java/ch/systemsx/cisd/base/convert/NativeData.java
+@@ -15,8 +15,6 @@
+ 
+ import java.nio.ByteBuffer;
+ 
+-import ch.systemsx.cisd.base.utilities.NativeLibraryUtilities;
+-
+ /**
+  * This class encapsulates native methods to deal with arrays of numbers, converting from numbers to
+  * bytes and bytes to numbers.
+@@ -28,27 +26,10 @@
+  * primitive numbers (int, short, ...)
+  * <p>
+  * Variant interfaces convert only a sub-array.
+- * <p>
+- * The class has optimized methods using jni-libraries for some common platforms and a pure-java
+- * implementation (called <i>javamode</i> if the jni-libraries are not available). If you want to
+- * enforce <i>javamode</i>, you need to pass the property <code>nativedata.javamode=true</code> to
+- * the JRE.
+  */
+ public class NativeData
+ {
+-    private static final boolean useNativeLib;
+-
+-    static
+-    {
+-        if (Boolean.getBoolean("nativedata.javamode"))
+-        {
+-            useNativeLib = false;
+-        } else
+-        {
+-	    System.loadLibrary("cisd_nativedata");
+-	    useNativeLib = true;
+-        }
+-    }
++    private static final boolean useNativeLib = false;
+ 
+     /** Size of a <code>short</code> value in <code>byte</code>s. */
+     public final static int SHORT_SIZE = 2;
+--- a/sourceTest/java/ch/systemsx/cisd/base/convert/NativeDataTests.java
++++ b/sourceTest/java/ch/systemsx/cisd/base/convert/NativeDataTests.java
+@@ -162,7 +162,6 @@
+     @Test(dataProvider = "getOfs")
+     public void testLongToByteToLong(int sourceOfs, int targetOfs)
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         final int sizeOfTarget = 8;
+         final long[] orignalArr = new long[]
+             { -1, 17, 100000, -1000000 };
+@@ -180,7 +179,6 @@
+     @Test(dataProvider = "getOfs")
+     public void testShortToByteToShort(int sourceOfs, int targetOfs)
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         final int sizeOfTarget = 2;
+         final short[] orignalArr = new short[]
+             { -1, 17, 20000, (short) -50000 };
+@@ -198,7 +196,6 @@
+     @Test(dataProvider = "getOfs")
+     public void testCharToByteToChar(int sourceOfs, int targetOfs)
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         final int sizeOfTarget = 2;
+         final char[] orignalArr = new char[]
+             { 'c', ';', '\u0222', '\u1000' };
+@@ -216,7 +213,6 @@
+     @Test(dataProvider = "getOfs")
+     public void testFloatToByteToFloat(int sourceOfs, int targetOfs)
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         final int sizeOfTarget = 4;
+         final float[] orignalArr = new float[]
+             { -1, 17, 3.14159f, -1e6f };
+@@ -234,7 +230,6 @@
+     @Test(dataProvider = "getOfs")
+     public void testDoubleToByteToDouble(int sourceOfs, int targetOfs)
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         final int sizeOfTarget = 8;
+         final double[] orignalArr = new double[]
+             { -1, 17, 3.14159, -1e42 };
+@@ -252,7 +247,6 @@
+     @Test
+     public void testShortEndianConversion()
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         final short[] values = new short[]
+             { 1, 2, 4, 8, 16, 256, 512 };
+         final short[] convertedValuesExpected = new short[]
+@@ -266,7 +260,6 @@
+     @Test
+     public void testIntEndianConversion()
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         final int[] values = new int[]
+             { 1, 2, 4, 8, 16, 256, 1 << 16 };
+         final int[] convertedValuesExpected = new int[]
+@@ -280,7 +273,6 @@
+     @Test
+     public void testLongEndianConversion()
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         final long[] values = new long[]
+             { 1, 2, 4, 8, 16, 256, 1L << 16, 1L << 24 };
+         final long[] convertedValuesExpected = new long[]
+@@ -294,7 +286,6 @@
+     @Test
+     public void testFloatLittleEndianRoundtrip()
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         final float[] values = new float[]
+             { 1.1f, 2.2f, 3.3f, 1e-25f, 1e25f };
+         final float[] convertedValuesFound =
+@@ -306,7 +297,6 @@
+     @Test
+     public void testFloatBigEndianRoundtrip()
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         final float[] values = new float[]
+             { 1.1f, 2.2f, 3.3f, 1e-25f, 1e25f };
+         final float[] convertedValuesFound =
+@@ -318,7 +308,6 @@
+     @Test
+     public void testDoubleLittleEndianRoundtrip()
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         final double[] values = new double[]
+             { 1.1f, 2.2f, 3.3f, 1e-25f, 1e25f };
+         final double[] convertedValuesFound =
+@@ -330,7 +319,6 @@
+     @Test
+     public void testDoubleBigEndianRoundtrip()
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         final double[] values = new double[]
+             { 1.1, 2.2, 3.3, 1e-25, 1e25 };
+         final double[] convertedValuesFound =
+@@ -342,28 +330,24 @@
+     @Test(expectedExceptions = NullPointerException.class)
+     public void testNPE()
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         NativeData.copyByteToLong(null, 0, null, 0, 0, ByteOrder.NATIVE);
+     }
+ 
+     @Test(expectedExceptions = IndexOutOfBoundsException.class)
+     public void testIOOB()
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         NativeData.copyByteToLong(new byte[] {}, -1, new long[] {}, 0, 0, ByteOrder.NATIVE);
+     }
+ 
+     @Test(expectedExceptions = IndexOutOfBoundsException.class)
+     public void testIOOB2()
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         NativeData.copyByteToLong(new byte[] {}, 0, new long[] {}, 10, 0, ByteOrder.NATIVE);
+     }
+ 
+     @Test
+     public void testPlatformEndiness()
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         final double[] values = new double[]
+             { 1.1, 2.2, 3.3, 1e-200, 1e200 };
+         final double[] valuesLE =
+@@ -387,7 +371,6 @@
+     @Test
+     public void testFloatToByteNonNativeByteOrderPartialOutputArray()
+     {
+-        assertTrue(NativeData.isUseNativeLib());
+         final int sizeOfTarget = 4;
+         final ByteOrder nonNativeByteOrder =
+                 (NativeData.getNativeByteOrder() == ByteOrder.LITTLE_ENDIAN) ? ByteOrder.BIG_ENDIAN

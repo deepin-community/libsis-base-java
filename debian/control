@@ -1,15 +1,41 @@
-Source: template-repository
-Section: unknown
+Source: libsis-base-java
+Maintainer: Debian Med Packaging Team <debian-med-packaging@lists.alioth.debian.org>
+Uploaders: Tim Booth <tbooth@ceh.ac.uk>,
+           Olivier Sallou <osallou@debian.org>,
+           Andreas Tille <tille@debian.org>
+Section: java
 Priority: optional
-Maintainer: Tsic404 <liuheng@deepin.org>
-Build-Depends: debhelper (>= 11)
-Standards-Version: 4.1.3
-Homepage: https://github.com/deepin-community/template-repository
-#Vcs-Browser: https://salsa.debian.org/debian/deepin-community-template-repository
-#Vcs-Git: https://salsa.debian.org/debian/deepin-community-template-repository.git
+Build-Depends: debhelper-compat (= 13),
+               default-jdk,
+               javahelper,
+               libcommons-lang3-java,
+               libcommons-io-java,
+               testng,
+               libtool,
+               procps
+Standards-Version: 4.5.1
+Vcs-Browser: https://salsa.debian.org/med-team/libsis-base-java
+Vcs-Git: https://salsa.debian.org/med-team/libsis-base-java.git
+Homepage: https://sissource.ethz.ch/sispub/base
+Rules-Requires-Root: no
 
-Package: template-repository
+Package: libsis-base-java
+Architecture: all
+Depends: ${misc:Depends},
+         ${java:Depends},
+         libsis-base-jni (>= ${source:Version})
+Description: Base libraries used by software from the SIS division at ETH Zurich
+ This library supplies some utility classes needed for libraries like sis-jhdf5.
+ .
+ Sis-jhdf5 is a Java binding to the HDF Group library for HDF5 focusing on
+ ease-of-use.
+
+Package: libsis-base-jni
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Depends: ${misc:Depends},
+         ${java:Depends},
+         ${shlibs:Depends}
+Description: Base libraries used by ETH-SIS (JNI components)
+ This library contains the two small native libraries used by libsis-base-java.
+ .
+ This library supplies some utility classes needed for libraries like sis-jhdf5.

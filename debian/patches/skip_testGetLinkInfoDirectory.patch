@@ -1,0 +1,30 @@
+Description: Skip non-functional test
+  From: Adam Borowski <kilobyte@angband.pl>
+  Date: Mon, 15 Jan 2018 00:11:55 +0100
+  .
+  This is caused by an assumption that link count of a directory without any
+  hardlinks is 2 (or more general, 2 plus number of subdirectories).  This is
+  true on 70's sysvfs and descendants like ext*, and emulated by most
+  filesystems, but not all.
+  .
+  Btrfs and some remote filesystems instead always give 1 (directory hardlinks
+  being an unthing on any filesystems I'm aware of, symlinks and reflinks have
+  a different semantic and thus neither is shown in link count).
+  .
+  Thus, this test is bogus and should be skipped.
+Bug-Debian: https://bugs.debian.org/885962
+Author: Andreas Tille <tille@debian.org>
+Last-Update: Mon, 15 Jan 2018 07:58:49 +0100
+Forwarded: Bernd Rinn <brinn@ethz.ch>
+
+--- a/sourceTest/java/ch/systemsx/cisd/base/unix/UnixTests.java
++++ b/sourceTest/java/ch/systemsx/cisd/base/unix/UnixTests.java
+@@ -90,7 +90,7 @@ public class UnixTests extends AbstractF
+     }
+ 
+     @Test(groups =
+-        { "requires_unix" })
++        { "skip_this_test" })
+     public void testGetLinkInfoSymLink() throws IOException
+     {
+         final File f = new File(workingDirectory, "someOtherFile");

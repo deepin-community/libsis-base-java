@@ -1,0 +1,32 @@
+Subject: fix way to load native libraries
+Description: upstream applies various methods to look for the
+ native library and falls back to pure java if linking fails.
+ Here we just load the library from /usr/lib/jni and quit
+ immediately if linking fails.
+Author: Tim Booth
+Forwarded: not-needed
+Last-Updated: 2015-08-21
+--- a/source/java/ch/systemsx/cisd/base/convert/NativeData.java
++++ b/source/java/ch/systemsx/cisd/base/convert/NativeData.java
+@@ -45,7 +45,8 @@ public class NativeData
+             useNativeLib = false;
+         } else
+         {
+-            useNativeLib = NativeLibraryUtilities.loadNativeLibrary("nativedata");
++	    System.loadLibrary("cisd_nativedata");
++	    useNativeLib = true;
+         }
+     }
+ 
+--- a/source/java/ch/systemsx/cisd/base/unix/Unix.java
++++ b/source/java/ch/systemsx/cisd/base/unix/Unix.java
+@@ -65,7 +65,8 @@ public final class Unix
+ 
+     static
+     {
+-        operational = NativeLibraryUtilities.loadNativeLibrary("unix");
++	System.loadLibrary("cisd_unix");
++        operational = true;
+         if (operational)
+         {
+             init();
