@@ -1,0 +1,81 @@
+Description: deactivate tests that cause a symlink pointing to nothing
+ In the concerned tests, a file named sameOtherFile is created, and at some
+ point in the afterClass method in AbstractFileSystemTestCase.java, this
+ symlink points to nothing, which is due to a bug in commons-io 2.8.0.
+ Those tests are deactivated, but should be activated again once the bug in
+ commons-io has been fixed.
+ See bug IO-692 in the bug dashboard on issues.apache.org website.
+Author: Pierre Gruet <pgtdebian@free.fr>
+Forwarded: not-needed
+Last-Update: 2020-12-06
+
+--- a/sourceTest/java/ch/systemsx/cisd/base/unix/UnixTests.java
++++ b/sourceTest/java/ch/systemsx/cisd/base/unix/UnixTests.java
+@@ -93,6 +93,7 @@
+         { "skip_this_test" })
+     public void testGetLinkInfoSymLink() throws IOException
+     {
++/*
+         final File f = new File(workingDirectory, "someOtherFile");
+         final String content = "someMoreText\n";
+         FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
+@@ -112,12 +113,14 @@
+         assertEquals(FileLinkType.REGULAR_FILE, info2.getLinkType());
+         assertFalse(info2.isSymbolicLink());
+         assertNull(info2.tryGetSymbolicLink());
++*/
+     }
+ 
+     @Test(groups =
+-        { "requires_unix" })
++        { "skip_this_test" })
+     public void testTouchSymLinkAndFileRealtimeTimer() throws IOException, InterruptedException
+     {
++/*
+         if (BuildAndEnvironmentInfo.INSTANCE.getOS().contains("2.6.32"))
+         {
+             System.out.println("  ...skipping as CentOS6 does not yet support the realtime timer.");
+@@ -173,12 +176,14 @@
+         assertNotEquals(lastMicros, info3.getLastModifiedTime().getMicroSecPart());
+         assertNotEquals(lastMicros, info3.getLastAccessTime().getMicroSecPart());
+ 
++*/
+     }
+ 
+     @Test(groups =
+-        { "requires_unix" })
++        { "skip_this_test" })
+     public void testTouchSymLinkAndFile() throws IOException, InterruptedException
+     {
++/*
+         Unix.setUseUnixRealtimeTimer(false);
+         final File f = new File(workingDirectory, "someOtherFile");
+         final String content = "someMoreText\n";
+@@ -230,6 +235,7 @@
+         assertNotEquals(lastMicros, info3.getLastModifiedTime().getMicroSecPart());
+         assertNotEquals(lastMicros, info3.getLastAccessTime().getMicroSecPart());
+ 
++*/
+     }
+ 
+     @Test(groups =
+@@ -280,9 +286,10 @@
+     }
+ 
+     @Test(groups =
+-        { "requires_unix" })
++        { "skip_this_test" })
+     public void testGetLinkInfoHardLink() throws IOException
+     {
++/*
+         final File f = new File(workingDirectory, "someOtherFile");
+         f.createNewFile();
+         final File s = new File(workingDirectory, "someLink");
+@@ -292,6 +299,7 @@
+         assertEquals(FileLinkType.REGULAR_FILE, info.getLinkType());
+         assertFalse(info.isSymbolicLink());
+         assertNull(info.tryGetSymbolicLink());
++*/
+     }
+ 
+     @Test(groups =

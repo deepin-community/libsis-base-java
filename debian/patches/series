@@ -1,0 +1,6 @@
+remove_ch_rinn_imports.patch
+load_native_debian.patch
+skip_testGetLinkInfoDirectory.patch
+skip_testGetLinkInfoSymLinkDanglingLink.patch
+deactivate_tests_causing_fail_dut_to_commons-io.patch
+force_use_nio.patch

@@ -1,0 +1,47 @@
+Subject: unneeded and unavailable method decorator
+Description: decorator is not available in Debian and is not useful for package
+Author: Tim Booth
+Forwarded: not-needed
+Last-Updated: 2015-08-21
+--- a/source/java/ch/systemsx/cisd/base/unix/Unix.java
++++ b/source/java/ch/systemsx/cisd/base/unix/Unix.java
+@@ -19,7 +19,6 @@ package ch.systemsx.cisd.base.unix;
+ import java.io.File;
+ import java.io.IOException;
+ 
+-import ch.rinn.restrictions.Private;
+ import ch.systemsx.cisd.base.exceptions.CheckedExceptionTunnel;
+ import ch.systemsx.cisd.base.exceptions.IOExceptionUnchecked;
+ import ch.systemsx.cisd.base.utilities.NativeLibraryUtilities;
+@@ -647,13 +646,11 @@ public final class Unix
+ 
+     private static native String strerror();
+     
+-    @Private
+     static boolean isProcessRunningProcFS(int pid)
+     {
+         return new File("/proc/" + pid).isDirectory();
+     }
+ 
+-    @Private
+     static boolean isProcessRunningPS(int pid)
+     {
+         try
+--- a/sourceTest/java/ch/systemsx/cisd/base/unix/UnixTests.java
++++ b/sourceTest/java/ch/systemsx/cisd/base/unix/UnixTests.java
+@@ -27,7 +27,6 @@ import java.nio.charset.Charset;
+ import org.apache.commons.io.FileUtils;
+ import org.testng.annotations.Test;
+ 
+-import ch.rinn.restrictions.Friend;
+ import ch.systemsx.cisd.base.BuildAndEnvironmentInfo;
+ import ch.systemsx.cisd.base.tests.AbstractFileSystemTestCase;
+ import ch.systemsx.cisd.base.unix.Unix.Group;
+@@ -39,7 +38,6 @@ import ch.systemsx.cisd.base.unix.Unix.S
+  * 
+  * @author Bernd Rinn
+  */
+-@Friend(toClasses = Unix.class)
+ public class UnixTests extends AbstractFileSystemTestCase
+ {
+     private UnixTests()

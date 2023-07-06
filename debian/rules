@@ -1,4 +1,49 @@
 #!/usr/bin/make -f
 
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export CLASSPATH=/usr/share/java/commons-lang3.jar:/usr/share/java/commons-io.jar:/usr/share/java/testng.jar
+
+export DEB_BUILD_MAINT_OPTIONS=hardening=+all
+
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
+
 %:
-	dh $@
+	dh $@ --with javahelper
+
+override_dh_auto_configure:
+	cp debian/build_native/* source/c
+	#Needed on Ubuntu 14.04
+	touch source/c/NEWS source/c/README source/c/AUTHORS source/c/ChangeLog
+	cd source/c && autoreconf -i
+	dh_auto_configure
+
+override_dh_auto_install-arch:
+	dh_auto_install -a
+	dh_installdirs -plibsis-base-jni /usr/lib/jni
+	cp -L source/c/.libs/*.so debian/*/usr/lib/jni/
+
+override_dh_auto_clean:
+	if test -e source/c/Makefile; then cd source/c; make clean; fi
+	rm -f source/c/AUTHORS source/c/NEWS source/c/README source/c/ChangeLog
+	rm -rf source/c/configure* source/c/Makefile* source/c/autom4te.cache source/c/.deps
+	rm -rf src lib build *.jar test .classpath libs
+	#find test -name '*.class' -delete
+	dh_auto_clean
+
+override_dh_auto_build:
+	# Avoids jh_build thinking that files in .svn or .pc are things it
+	# needs to compile.
+	mkdir src ; cp -r source/java/ch src
+	jh_build sis-base.jar src
+	cd source/c ; ./configure && make
+
+override_dh_auto_test-arch:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	dh_auto_test -a
+	mkdir test ; cp -r source/java/ch test ; cp -r sourceTest/java/ch test
+	jh_build sis-base-test.jar test
+	LC_ALL=C java -Djava.library.path=source/c/.libs -classpath sis-base-test.jar ch.systemsx.cisd.base.AllTests
+endif

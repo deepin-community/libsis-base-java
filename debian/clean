@@ -1,0 +1,16 @@
+source/c/INSTALL
+source/c/aclocal.m4
+source/c/compile
+source/c/config.guess
+source/c/config.h
+source/c/config.h.in
+source/c/config.log
+source/c/config.status
+source/c/config.sub
+source/c/depcomp
+source/c/install-sh
+source/c/libtool
+source/c/ltmain.sh
+source/c/missing
+source/c/stamp-h1
+
